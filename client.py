@@ -25,7 +25,7 @@ USERNAME = "dummy_username"
 PASSWORD = "dummy_password"
 ACTION = "dummy_action"
 TARGET = "dummy_target"
-LIST_PER_PAGE = "200"
+LIST_PER_PAGE = "2"
 
 
 # usage info
@@ -40,6 +40,9 @@ def usage():
         -t, --target    indicate the user who you want to reference
 
     ''')
+    print("In the case of default, param value \"watching\" will watch a repo and notifications should be received from "
+          "this repo. If you want block notifications from this repo, you can set the action to "
+          "\"watching-withoutnotify\". The param value \"watching\" is equivalent to \"watching-withnofity\".\n")
     print("Report bugs to <mynameisny@126.com>.")
 
 
@@ -219,7 +222,7 @@ def _get_watching_repo_list(username):
 
 
 # watch a repository (Set a Repository Subscription)
-def _watch_repo(owner, repo):
+def _watch_repo(owner, repo, mode):
     """
         you can execute the command like below in your terminal for test(not include prompt symbol '$'):
         $ curl -i -X PUT -H 'Context-Length:0'  '{"subscribed": "true"}' -u "mynameisny" "https://api.github.com/re
@@ -230,7 +233,8 @@ def _watch_repo(owner, repo):
 
         TODO update basic put method: allow pass in a param
     """
-    put_data = '{"subscribed": "true"}'
+    #put_data = '{"subscribed": "true"}'
+    put_data = '{"' + mode + '": "true"}'
     api_result = _send_put_request('https://api.github.com/repos/' + owner + '/' + repo + '/subscription', CREDENTIAL,
                                    put_data)
     return api_result
@@ -263,10 +267,10 @@ def migrate_following(target):
 
 
 # watch all old GitHub account's watching-repo for the new one
-def migrate_watching(target):
+def migrate_watching(target, mode="subscribed"):
     for watch_repo_entry in _get_watching_repo_list(target):
         print("[Info]Begin to watch " + watch_repo_entry['owner'] + "'s repository: " + watch_repo_entry['name'] + "...")
-        _watch_repo(watch_repo_entry['owner'], watch_repo_entry['name'])
+        _watch_repo(watch_repo_entry['owner'], watch_repo_entry['name'], mode)
 
 
 if __name__ == '__main__':
@@ -282,6 +286,10 @@ if __name__ == '__main__':
             migrate_following(TARGET)
         elif ACTION == "watching":
             migrate_watching(TARGET)
+        elif ACTION == "watching-withnotify":
+            migrate_watching(TARGET, "subscribed")
+        elif ACTION == "watching-withoutnotify":
+            migrate_watching(TARGET, "ignored")
         else:
             usage()
             sys.exit()

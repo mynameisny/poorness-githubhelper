@@ -32,13 +32,20 @@ usage: test.py <options>
         -h, --help      show this help message and exit
         -u, --username  indicate your GitHub username
         -p, --password  indicate your GitHub password
+        -a, --action    indicate the action you want to do [star|following|watching]
         -t, --target    indicate the user who you want to reference
+
+
+In the case of default, param value "watching" will watch a repo and notificatio
+ns should be received from this repo. If you want block notifications from this
+repo, you can set the action to "watching-withoutnotify". The param value "watch
+ing" is equivalent to "watching-withnofity".
 
 
 ----------
 
 # TODO
-1. Batch follow GitHub user's watching and following.
+1. ~~Batch follow GitHub user's watching and following.~~
 2. Support OAuth2 autenticate.
 3. Clean old user's star repo(unstar).
 
