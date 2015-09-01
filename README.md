@@ -1,8 +1,8 @@
 
 
 # Overview
-this is a simple tool the follow GitHub user's starred.
-When you switch to a new account, you can use it to sync your old star of the past.
+this is a simple tool the follow GitHub user's starred, following, watching and clean all them by determined a account.
+When you switch to a new account, you can use it to sync your old data of the past.
 
 ----------
 
@@ -32,7 +32,7 @@ usage: test.py <options>
         -h, --help      show this help message and exit
         -u, --username  indicate your GitHub username
         -p, --password  indicate your GitHub password
-        -a, --action    indicate the action you want to do [star|following|watching]
+        -a, --action    indicate the action you want to do [star|following|watching|clean]
         -t, --target    indicate the user who you want to reference
 
 
@@ -47,7 +47,7 @@ ing" is equivalent to "watching-withnofity".
 # TODO
 1. ~~Batch follow GitHub user's watching and following.~~
 2. Support OAuth2 autenticate.
-3. Clean old user's star repo(unstar).
+3. ~~Clean old user's star repo(unstar).~~
 
 ----------
 

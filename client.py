@@ -25,7 +25,7 @@ USERNAME = "dummy_username"
 PASSWORD = "dummy_password"
 ACTION = "dummy_action"
 TARGET = "dummy_target"
-LIST_PER_PAGE = "2"
+LIST_PER_PAGE = "9999"
 
 
 # usage info
@@ -36,7 +36,7 @@ def usage():
         -h, --help      show this help message and exit
         -u, --username  indicate your GitHub username
         -p, --password  indicate your GitHub password
-        -a, --action    indicate the action you want to do [star|following|watching]
+        -a, --action    indicate the action you want to do [star|following|watching|clean]
         -t, --target    indicate the user who you want to reference
 
     ''')
@@ -91,6 +91,13 @@ def init_args():
             usage()
             sys.exit()
     return username, password, action, target, (arg_u_exist and arg_p_exist and arg_a_exist and arg_t_exist)
+
+
+# echo success info
+def _echo_sucess(msg=None):
+    if not msg:
+        msg = "Operation complete!"
+    print(msg)
 
 
 # common method: send a HTTP API invocation
@@ -273,6 +280,27 @@ def migrate_watching(target, mode="subscribed"):
         _watch_repo(watch_repo_entry['owner'], watch_repo_entry['name'], mode)
 
 
+# unstar all starred repo of the user
+def clean_star_repo(target):
+    for star_repo_entry in _get_starred_url_list(target):
+        print("[Info]Begin to unstar " + star_repo_entry['owner'] + "'s repository: " + star_repo_entry['name'] + "...")
+        _unstar_repo(star_repo_entry['owner'], star_repo_entry['name'])
+
+
+# unfollow all following of the user
+def clean_following_repo(target):
+    for following_user_entry in _get_following_user_list(target):
+        print("[Info]Begin to unfollow user: " + following_user_entry['name'] + "...")
+        _unfollow_user(following_user_entry['name'])
+
+
+# unwatching all watched repo of the user
+def clean_watching_repo(target):
+    for watch_repo_entry in _get_watching_repo_list(target):
+        print("[Info]Begin to unwatch " + watch_repo_entry['owner'] + "'s repository: " + watch_repo_entry['name'] + "...")
+        _unwatch_repo(watch_repo_entry['owner'], watch_repo_entry['name'])
+
+
 if __name__ == '__main__':
     USERNAME, PASSWORD, ACTION, TARGET, flag = init_args()
     CREDENTIAL.append(USERNAME)
@@ -282,14 +310,33 @@ if __name__ == '__main__':
         print("username=" + USERNAME + ", password=" + PASSWORD + ", action=" + ACTION + ", target=" + TARGET)
         if ACTION == 'star':
             migrate_star_repo(TARGET)
+            _echo_sucess()
         elif ACTION == "following":
             migrate_following(TARGET)
+            _echo_sucess()
         elif ACTION == "watching":
             migrate_watching(TARGET)
+            _echo_sucess()
         elif ACTION == "watching-withnotify":
             migrate_watching(TARGET, "subscribed")
+            _echo_sucess()
         elif ACTION == "watching-withoutnotify":
             migrate_watching(TARGET, "ignored")
+            _echo_sucess()
+        elif ACTION == "clean":
+            clean_star_repo(TARGET)
+            clean_following_repo(TARGET)
+            clean_watching_repo(TARGET)
+            _echo_sucess()
+        elif ACTION == "clean-star":
+            clean_star_repo(TARGET)
+            _echo_sucess()
+        elif ACTION == "clean-following":
+            clean_following_repo(TARGET)
+            _echo_sucess()
+        elif ACTION == "clean-watching":
+            clean_watching_repo(TARGET)
+            _echo_sucess()
         else:
             usage()
             sys.exit()
